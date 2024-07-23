@@ -3,7 +3,7 @@ final class Player extends Entity {
   PVector pos2; //Future tile
   PShape model;
   //Current moving direction
-  Move move;
+  boolean forwards, backwards, left, right, none;
   
   //Inventory
   ArrayList<Item> inventory;
@@ -13,7 +13,8 @@ final class Player extends Entity {
   Player(float row, float col) {
     super(new PVector(col*unit, 0, row*unit), 10, 10, 5, 0.5);  //-6 from height of model
     model = loadShape("hero.obj");
-    this.move = Move.NONE;
+    //this.move = Move.NONE;
+    forwards = backwards = left = right = none = false;
     this.pos2 = this.pos.copy();
     
     //Inventory
@@ -41,45 +42,48 @@ final class Player extends Entity {
     
     this.ori.y += map(mouseX - width/2, -width/2, width/2, -PI, PI) * sensitivity; //Model face in direction player is facing
     this.pos2 = this.pos.copy();
+    this.vel.mult(0);
     //Movement
-    switch(this.move) {
-      case UP :
-        this.vel.z = -speed * sin(this.ori.y + HALF_PI);
-        this.vel.x = -speed * cos(this.ori.y + HALF_PI);
+      if(this.forwards) {
+        this.vel.z += -speed * sin(this.ori.y + HALF_PI);
+        this.vel.x += -speed * cos(this.ori.y + HALF_PI);
         this.pos2.z += -unit * sin(this.ori.y + HALF_PI);
         this.pos2.x += -unit * cos(this.ori.y + HALF_PI);
         this.ori.x = QUARTER_PI/8;
         this.ori.z = 0;
-        break;
-      case DOWN :
-        this.vel.z = speed * sin(this.ori.y + HALF_PI) * 0.5;
-        this.vel.x = speed * cos(this.ori.y + HALF_PI) * 0.5;
+      } 
+      if(this.backwards) {
+        this.vel.z += speed * sin(this.ori.y + HALF_PI) * 0.5;
+        this.vel.x += speed * cos(this.ori.y + HALF_PI) * 0.5;
         this.pos2.z += unit * sin(this.ori.y + HALF_PI);
         this.pos2.x += unit * cos(this.ori.y + HALF_PI);
         this.ori.x = -QUARTER_PI/8;
         this.ori.z = 0;
-        break;
-      case LEFT :
-        this.vel.z = -speed * sin(this.ori.y) * 0.75;
-        this.vel.x = -speed * cos(this.ori.y) * 0.75;
+      }
+      if(this.left) {
+        this.vel.z += -speed * sin(this.ori.y) * 0.75;
+        this.vel.x += -speed * cos(this.ori.y) * 0.75;
         this.pos2.z += -unit * sin(this.ori.y);
         this.pos2.x += -unit * cos(this.ori.y);
         this.ori.z = QUARTER_PI/8;
         this.ori.x = 0;
-        break;
-      case RIGHT :
-        this.vel.z = speed * sin(this.ori.y) * 0.75;
-        this.vel.x = speed * cos(this.ori.y) * 0.75;
+      }
+      if(this.right) {
+        this.vel.z += speed * sin(this.ori.y) * 0.75;
+        this.vel.x += speed * cos(this.ori.y) * 0.75;
         this.pos2.z += unit * sin(this.ori.y);
         this.pos2.x += unit * cos(this.ori.y);
         this.ori.z = -QUARTER_PI/8;
         this.ori.x = 0;
-        break;
-      case NONE :
-        this.vel.mult(0);
-        this.ori.x = 0;
-        this.ori.z = 0;
-    }
+      }
+      
+      //Don't normalise speed
+      
+      //if(this.none) {
+      //  this.vel.mult(0);
+      //  this.ori.x = 0;
+      //  this.ori.z = 0;
+      //}
     
     //Collision detection/resolution
     //Keep within bounds of map

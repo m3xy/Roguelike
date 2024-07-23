@@ -181,16 +181,16 @@ void write(String text, float x, float y, int alignX, int alignY, float size, co
 void keyPressed() {
   switch (key) {  //Movement
     case 'w' :
-      player.move = Move.UP;
+      player.forwards = true;
       break;
     case 'a' :
-      player.move = Move.LEFT;
+      player.left = true;
       break;
     case 's' :
-      player.move = Move.DOWN;
+      player.backwards = true;
       break;
     case 'd' :
-      player.move = Move.RIGHT;
+      player.right = true;
       break;
     case ' ' :      //Attacking
       player.use();
@@ -207,10 +207,16 @@ void keyPressed() {
 void keyReleased() {
   switch (key) {  //Movement
     case 'w' :
+      player.forwards = false;
+      break;
     case 's' :
+      player.backwards = false;
+      break;
     case 'a' :
+      player.left = false;
+      break;
     case 'd' :
-      player.move = Move.NONE;
+      player.right = false;
       break;
   }
 }
